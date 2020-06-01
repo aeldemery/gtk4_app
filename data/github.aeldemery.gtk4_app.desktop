@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type = Application
+Terminal = false
+Name = Gtk4 Example
+StartupNotify = true
+Exec = /home/ahmed/Projects/Vala/Gtk4_App/builddir/meson-out/github.aeldemery.gtk4_app
+Categories=Development;
