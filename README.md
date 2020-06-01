@@ -27,8 +27,8 @@ the Menu Quit.
 
 Main Window
 
-![Main Window](data/Screenshot 1.png)
+![Main Window](https://github.com/aeldemery/gtk4_app/blob/master/data/Screenshot%201.png)
 
 Preferences Dialog
 
-![PreferencesDialog](data/Screenshot 2.png)
+![PreferencesDialog](https://github.com/aeldemery/gtk4_app/blob/master/data/Screenshot%202.png)
