@@ -23,3 +23,12 @@ There is unresolved issue, I'm not sure if its a bug with Gtk4 itself,
 which is closing the window don't exit the process. You must use Ctrl-Q or 
 the Menu Quit.
 
+### Screenshots
+
+Main Window
+
+![Main Window](data/Screenshot 1.png)
+
+Preferences Dialog
+
+![PreferencesDialog](data/Screenshot 2.png)
