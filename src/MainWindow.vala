@@ -46,7 +46,17 @@ namespace Gtk4AppDemo {
         [GtkChild]
         private Gtk.SearchBar searchbar;
         [GtkChild]
+        private Gtk.SearchEntry searchentry;
+        [GtkChild]
         private Gtk.ToggleButton search_button;
+        [GtkChild]
+        private Gtk.Revealer sidebar;
+        [GtkChild]
+        private Gtk.ListBox words;
+        [GtkChild]
+        private Gtk.Label lines;
+        [GtkChild]
+        private Gtk.Label lines_label;
 
         construct {
             var builder = new Gtk.Builder.from_resource ("/github/aeldemery/gtk4_app/gears-menu.ui");
@@ -56,7 +66,20 @@ namespace Gtk4AppDemo {
 
             settings = new GLib.Settings ("github.aeldemery.gtk4_app");
             settings.bind ("transition", stack, "transition-type", GLib.SettingsBindFlags.DEFAULT);
+            settings.bind ("show-words", sidebar, "reveal-child", GLib.SettingsBindFlags.DEFAULT);
+
             search_button.bind_property ("active", searchbar, "search-mode-enabled", BindingFlags.BIDIRECTIONAL);
+            lines.bind_property ("visible", lines_label, "visible", BindingFlags.DEFAULT);
+
+            var show_words_action = settings.create_action ("show-words");
+            this.add_action (show_words_action);
+
+            var lines_action = new GLib.PropertyAction ("show-lines", lines, "visible");
+            this.add_action (lines_action);
+
+            sidebar.notify["reveal-child"].connect ((sender, property) => {
+                words_changed (sender, property);
+            });
         }
 
         public MainWindow (Gtk.Application app) {
@@ -103,6 +126,8 @@ namespace Gtk4AppDemo {
             text_view.buffer.apply_tag (tag, start_iter, end_iter);
 
             search_button.sensitive = true;
+            update_words ();
+            update_lines ();
         }
 
         [GtkCallback]
@@ -130,6 +155,66 @@ namespace Gtk4AppDemo {
         [GtkCallback]
         void visible_child_changed (GLib.Object object, ParamSpec pspec) {
             searchbar.search_mode_enabled = false;
+            update_words ();
+            update_lines ();
+        }
+
+        void words_changed (Object sidebar, GLib.ParamSpec paramspec) {
+            update_words ();
+        }
+
+        void find_word (Gtk.Button button) {
+            searchentry.text = button.label;
+        }
+
+        void update_words () {
+            // GLib.HashTable strings = new GLib.HashTable<string, string>(str_hash, str_equal);
+            Gee.HashSet<string> strings = new Gee.HashSet<string>();
+            Gtk.TextIter start, end;
+
+            var tab = stack.visible_child;
+            if (tab == null) {
+                return;
+            }
+
+            var view = (Gtk.TextView)tab.get_first_child ();
+            var buffur = view.get_buffer ();
+            buffur.get_start_iter (out start);
+            end = start;
+
+            while (!start.is_end ()) {
+                while (!start.starts_word ()) {
+                    if (!start.forward_char ()) break;
+                }
+                if (!end.forward_word_end ()) break;
+                var word = buffur.get_text (start, end, false);
+                // debug (word + "\n");
+                start = end;
+                strings.add (word.down ());
+            }
+            /* Brocken */
+            // TODO: What is the alternative?!
+            // while (words.get_first_child () != null) {
+            // words.remove (child);
+            // }
+
+            foreach (var key in strings) {
+                var row = new Gtk.Button.with_label (key);
+                row.clicked.connect ((w) => { find_word (w); });
+                words.prepend (row);
+                row.show ();
+            }
+        }
+
+        void update_lines () {
+            var view = stack.visible_child;
+            if (view == null) return;
+
+            var text = view.get_first_child () as Gtk.TextView;
+            var buffer = text.get_buffer ();
+            var count = buffer.get_line_count ();
+
+            lines.label = count.to_string ();
         }
     }
 }
