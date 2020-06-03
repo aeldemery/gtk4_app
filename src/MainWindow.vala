@@ -192,11 +192,13 @@ namespace Gtk4AppDemo {
                 start = end;
                 strings.add (word.down ());
             }
-            /* Brocken */
-            // TODO: What is the alternative?!
-            // while (words.get_first_child () != null) {
-            // words.remove (child);
-            // }
+
+            var child = words.get_first_child ();
+            while (child != null) {
+                var next = child.get_next_sibling ();
+                words.remove (child);
+                child = next;
+            }
 
             foreach (var key in strings) {
                 var row = new Gtk.Button.with_label (key);
