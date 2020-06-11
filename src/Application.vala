@@ -31,7 +31,7 @@ namespace Gtk4AppDemo {
     public class Gtk4App : Gtk.Application {
 
         // Member variables
-        Gtk4AppDemo.MainWindow main_win;
+        // Gtk4AppDemo.MainWindow main_win;
 
         public const GLib.ActionEntry[] action_entries = {
             { "preferences", preferences_activated },
@@ -49,7 +49,7 @@ namespace Gtk4AppDemo {
         }
 
         protected override void activate () {
-            main_win = this.active_window as Gtk4AppDemo.MainWindow;
+            var main_win = this.active_window as Gtk4AppDemo.MainWindow;
             if (main_win == null) {
                 main_win = new Gtk4AppDemo.MainWindow (this);
             }
@@ -57,7 +57,7 @@ namespace Gtk4AppDemo {
         }
 
         protected override void open (GLib.File[] files, string hint) {
-            main_win = this.active_window as Gtk4AppDemo.MainWindow;
+            var main_win = this.active_window as Gtk4AppDemo.MainWindow;
             if (main_win == null) {
                 main_win = new Gtk4AppDemo.MainWindow (this);
             }
@@ -75,7 +75,10 @@ namespace Gtk4AppDemo {
         }
 
         void preferences_activated (SimpleAction action, Variant ? variant) {
-            main_win = (Gtk4AppDemo.MainWindow)get_active_window ();
+            var main_win = this.active_window as Gtk4AppDemo.MainWindow;
+            if (main_win == null) {
+                main_win = new Gtk4AppDemo.MainWindow (this);
+            }
             var preferences_dialog = new PreferencesDialog (main_win);
             preferences_dialog.present ();
         }
