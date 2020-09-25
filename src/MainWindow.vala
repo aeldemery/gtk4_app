@@ -91,7 +91,7 @@ namespace Gtk4AppDemo {
         }
 
         void init_ui () {
-            scrolled_window = new Gtk.ScrolledWindow (null, null);
+            scrolled_window = new Gtk.ScrolledWindow ();
             scrolled_window.hexpand = true;
             scrolled_window.vexpand = true;
 
